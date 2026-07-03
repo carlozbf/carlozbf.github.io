@@ -1,0 +1,12 @@
+{
+  "name": "partido-express",
+  "version": "1.0.0",
+  "description": "Sistema de pedidos responsivo para móvil sin backend",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server ."
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

@@ -1,1 +1,263 @@
-This is a test
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Partido Express - Pedidos Móviles en Tiempo Real</title>
+  <meta name="description" content="Realiza tus pedidos de cerveza, papas y agua de forma instantánea. Sistema de pedidos ligero para móviles sin backend.">
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- Supabase CDN (Carga de librerías para sincronización opcional en tiempo real) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- Toast de Notificaciones -->
+  <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
+
+  <!-- Cabecera -->
+  <header>
+    <div class="header-container">
+      <div class="logo" id="app-logo">
+        <span>⚡</span> ZulimisExpress
+      </div>
+      <div class="role-selector" role="radiogroup" aria-label="Selector de Rol">
+        <button id="btn-role-client" class="role-btn active" role="radio" aria-checked="true">Cliente</button>
+        <button id="btn-role-admin" class="role-btn" role="radio" aria-checked="false">Admin</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenedor Principal -->
+  <main class="container">
+    
+    <!-- ================= VISTA CLIENTE ================= -->
+    <section id="client-view">
+      <div class="hero-section">
+        <h1>¡Pide tu Pedido!</h1>
+        <p>Selecciona tus productos favoritos y recíbelos en minutos.</p>
+      </div>
+
+      <!-- Sección de Identificación del Cliente -->
+      <div class="client-identity-container" id="client-identity-box">
+        <div id="client-select-section" class="identity-form-group">
+          <label for="client-name-input">Identifícate para ordenar (Escribe tu Nombre o Mesa):</label>
+          <div class="client-select-wrapper">
+            <input type="text" id="client-name-input" placeholder="Ej: Lida, Edilberto, Viviana, etc.">
+            <button id="btn-submit-name" class="btn-primary" style="padding: 0 20px;">Ingresar</button>
+          </div>
+        </div>
+
+        <div id="client-active-section" class="client-active-badge hidden">
+          <div>
+            <span style="color: var(--text-secondary); font-size: 0.85rem;">PIDIENDO DESDE:</span>
+            <div id="client-display-name" style="font-size: 1.1rem; font-weight: 700; color: var(--accent-color);">Mesa X</div>
+          </div>
+          <button id="btn-change-client" class="change-client-btn">Cambiar</button>
+        </div>
+      <!-- Historial de Pedidos del Cliente (Ahora arriba) -->
+      <section id="client-orders-section" class="client-orders-section hidden" style="margin-bottom: 24px;">
+        <h2>Mis Pedidos Recientes</h2>
+        <div id="client-orders-list" class="client-orders-list">
+          <!-- Renderizado dinámico de pedidos personales -->
+        </div>
+      </section>
+
+      <!-- Cuadrícula de Productos -->
+      <h2 style="font-size: 1.25rem; margin-bottom: 12px; color: var(--text-secondary);">Nuestra Carta</h2>
+      <div id="products-grid" class="products-grid">
+        <!-- Renderizado dinámico de productos -->
+      </div>
+    </section>
+
+    <!-- ================= VISTA ADMINISTRADOR ================= -->
+    <section id="admin-view" class="hidden">
+      <div class="hero-section">
+        <h1>Panel de Administración</h1>
+        <p>Monitoreo y control de pedidos en tiempo real.</p>
+      </div>
+
+      <!-- Tarjetas de Estadísticas -->
+      <div class="admin-stats">
+        <div class="stat-card">
+          <div class="stat-label">Pedidos</div>
+          <div id="stat-total-orders" class="stat-val" style="color: var(--accent-color);">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Activos</div>
+          <div id="stat-active-orders" class="stat-val" style="color: var(--warning-color);">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Listos</div>
+          <div id="stat-completed-orders" class="stat-val" style="color: var(--success-color);">0</div>
+        </div>
+      </div>
+
+      <!-- Botones de Control del Admin -->
+      <div class="admin-controls-bar">
+        <button id="btn-admin-config" class="btn-secondary" title="Configurar conexión de base de datos en la nube">
+          ⚙️ Nube
+        </button>
+        <button id="btn-admin-restock" class="btn-secondary" title="Modificar stock actual">
+          📦 Stock
+        </button>
+        <button id="btn-admin-clear" class="btn-danger" title="Borrar historial y reiniciar todo">
+          🗑️ Reiniciar Todo
+        </button>
+      </div>
+
+      <!-- Listados de Pedidos Administrador -->
+      <div class="admin-lists-container">
+        <!-- Pedidos Pendientes -->
+        <h2 style="font-size: 1.25rem; margin-bottom: 12px; color: var(--warning-color); display: flex; align-items: center; gap: 8px;">
+          ⏳ Pedidos Activos
+        </h2>
+        <div id="admin-pending-list" class="client-orders-list" style="margin-bottom: 30px;">
+          <!-- Pedidos pendientes / preparándose -->
+        </div>
+
+        <!-- Historial Entregados -->
+        <h2 style="font-size: 1.25rem; margin-bottom: 12px; color: var(--success-color); display: flex; align-items: center; gap: 8px;">
+          ✅ Historial Entregados
+        </h2>
+        <div id="admin-history-list" class="client-orders-list">
+          <!-- Historial de pedidos entregados -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= BARRA DE COMPRA FLOTANTE ================= -->
+  <section id="checkout-bar" class="checkout-bar">
+    <div class="checkout-container">
+      <div class="checkout-summary">
+        <span id="items-count" class="items-count">0 productos seleccionados</span>
+      </div>
+      <button id="btn-checkout" class="btn-primary">
+        🛒 Ver Carrito
+      </button>
+    </div>
+  </section>
+
+  <!-- ================= MODAL: DETALLES Y CONFIRMACIÓN DE COMPRA ================= -->
+  <div id="checkout-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="checkout-modal-title">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="checkout-modal-title">Confirmar Pedido</h3>
+        <button class="close-btn" aria-label="Cerrar modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 8px;">Por favor, revisa los detalles de tu pedido antes de enviarlo:</p>
+        <div id="modal-order-details" style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- Items en el carrito renderizados con JS -->
+        </div>
+        <!-- Ocultado ya que no hay precios -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary btn-close-modal">Cancelar</button>
+        <button id="btn-confirm-order" class="btn-primary">Enviar Pedido 🚀</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: CONFIGURACIÓN SUPABASE ================= -->
+  <div id="settings-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 id="settings-modal-title">Estado de la Conectividad</h3>
+        <button class="close-btn" aria-label="Cerrar modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; margin-bottom: 10px;">
+          Esta aplicación está configurada para conectarse directamente a <strong>Supabase</strong> a través del archivo estático <code style="background: rgba(255,255,255,0.1); padding: 2px 4px; border-radius: 4px; color: var(--accent-color);">config.json</code> en el servidor.
+        </p>
+
+        <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px; font-size: 0.9rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: var(--text-secondary);">URL Supabase:</span>
+            <span id="info-db-url" style="font-weight: 500; font-family: monospace; word-break: break-all; max-width: 250px; text-align: right;">-</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: var(--text-secondary);">Estado DB:</span>
+            <span id="info-db-status" class="status-badge pending">Cargando...</span>
+          </div>
+          <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 6px 0;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: var(--text-secondary);">WhatsApp Redir:</span>
+            <span id="info-wa-status" style="font-weight: 600;">-</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: var(--text-secondary);">Teléfono Admin:</span>
+            <span id="info-wa-phone" style="font-family: monospace;">-</span>
+          </div>
+        </div>
+
+        <p style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.3; margin-top: 5px;">
+          💡 Para modificar estas credenciales o activar/desactivar WhatsApp, por favor edita el archivo <code>config.json</code> en la carpeta raíz del proyecto.
+        </p>
+
+        <!-- Instrucciones SQL -->
+        <details style="background: rgba(0, 0, 0, 0.2); padding: 10px; border-radius: 8px; font-size: 0.75rem; border: 1px solid var(--border-color); margin-top: 8px;">
+          <summary style="cursor: pointer; font-weight: 600; color: var(--accent-color);">📋 Instrucciones de Configuración SQL (Para Supabase)</summary>
+          <p style="margin: 8px 0; color: var(--text-secondary);">Ejecuta este código en el editor SQL de Supabase para crear la tabla y habilitar tiempo real:</p>
+          <pre style="background: rgba(0,0,0,0.5); padding: 8px; border-radius: 6px; overflow-x: auto; color: #a5b4fc; font-family: monospace; font-size: 0.7rem; white-space: pre-wrap; word-break: break-all;">
+CREATE TABLE orders (
+  id uuid default gen_random_uuid() primary key,
+  client_name text not null,
+  items jsonb not null,
+  total decimal(10,2) not null,
+  status text not null default 'pending',
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+ALTER PUBLICATION supabase_realtime ADD TABLE orders;</pre>
+        </details>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary btn-close-modal" style="width: 100%; justify-content: center;">Entendido</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: INFO STOCK ================= -->
+  <div id="restock-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="restock-modal-title">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="restock-modal-title">Información de Inventario</h3>
+        <button class="close-btn" aria-label="Cerrar modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; margin-bottom: 12px;">
+          El stock disponible se calcula restando la cantidad pedida por los clientes del stock base definido en <code>products.json</code>.
+        </p>
+
+        <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem;">
+            <span>🍺 Cerveza Helada</span>
+            <span style="font-weight: 700;" id="info-stock-cerveza">-</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem;">
+            <span>🍟 Papas Fritas</span>
+            <span style="font-weight: 700;" id="info-stock-papas">-</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem;">
+            <span>💧 Agua Mineral</span>
+            <span style="font-weight: 700;" id="info-stock-agua">-</span>
+          </div>
+        </div>
+
+        <p style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.3; margin-top: 5px;">
+          💡 Para modificar las cantidades iniciales de inventario, por favor edita el archivo <code>products.json</code> directamente. 
+          Para restablecer el stock al valor inicial, puedes limpiar el historial con el botón <strong>"Reiniciar Todo"</strong>.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary btn-close-modal" style="width: 100%; justify-content: center;">Entendido</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
