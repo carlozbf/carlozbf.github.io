@@ -3,30 +3,30 @@
     "id": "cerveza",
     "name": "Cerveza Helada",
     "category": "Bebidas",
-    "unit": "botella 330ml",
-    "stock": 50,
+    "unit": "lata 200ml",
+    "stock": 1,
     "icon": "🍺",
-    "description": "Cerveza artesanal rubia premium, servida a la temperatura ideal.",
+    "description": "Cerveza Club Colombia servida a la temperatura ideal.",
     "color": "var(--beer-color)"
   },
   {
-    "id": "papas",
-    "name": "Papas Fritas",
+    "id": "pizza",
+    "name": "Pizza Carnes",
     "category": "Snacks",
     "unit": "porción familiar",
-    "stock": 30,
-    "icon": "🍟",
-    "description": "Crujientes papas fritas rústicas sazonadas con sal marina y especias.",
-    "color": "var(--papas-color)"
+    "stock": 0,
+    "icon": "🍕",
+    "description": "Rica pizza de carnes.",
+    "color": "var(--pizza-color)"
   },
   {
     "id": "agua",
     "name": "Agua Mineral",
     "category": "Bebidas",
     "unit": "botella 500ml",
-    "stock": 100,
+    "stock": 0,
     "icon": "💧",
-    "description": "Agua mineral de manantial, con o sin gas, purificada y refrescante.",
+    "description": "Agua mineral purificada y refrescante.",
     "color": "var(--agua-color)"
   }
 ]
