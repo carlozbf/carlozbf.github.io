@@ -657,12 +657,24 @@ function setupEventListeners() {
     updateRoleView();
   });
   
-  document.getElementById('btn-role-admin').addEventListener('click', () => {
-    playSound('click');
-    activeRole = 'admin';
-    localStorage.setItem('partido_active_role', 'admin');
-    updateRoleView();
-  });
+	document.getElementById('btn-role-admin').addEventListener('click', () => {
+	  playSound('click');
+
+	  const password = prompt('Ingrese la contraseña de administrador:');
+
+	  if (password === null) {
+		return; // El usuario canceló
+	  }
+
+	  if (password !== '10140') {
+		showToast('Contraseña incorrecta', 'danger');
+		return;
+	  }
+
+	  activeRole = 'admin';
+	  localStorage.setItem('partido_active_role', 'admin');
+	  updateRoleView();
+	});
 
   // Confirmación de Identidad por Botón
   const submitName = () => {
