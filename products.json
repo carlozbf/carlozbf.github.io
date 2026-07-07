@@ -1,30 +1,50 @@
 [
   {
     "id": "cerveza",
-    "name": "Cerveza Helada",
+    "name": "Cerveza Stella Artois",
     "category": "Bebidas",
-    "unit": "lata 200ml",
-    "stock": 1,
+    "unit": "botella 330ml",
+    "stock": 16,
     "icon": "🍺",
-    "description": "Cerveza Club Colombia servida a la temperatura ideal.",
+    "description": "Cerveza Stella Artois",
     "color": "var(--beer-color)"
   },
   {
-    "id": "pizza",
-    "name": "Pizza Carnes",
-    "category": "Snacks",
-    "unit": "porción familiar",
-    "stock": 0,
-    "icon": "🍕",
-    "description": "Rica pizza de carnes.",
-    "color": "var(--pizza-color)"
+    "id": "cerveza",
+    "name": "Cerveza Budweiser",
+    "category": "Bebidas",
+    "unit": "lata 269ml",
+    "stock": 16,
+    "icon": "🍺",
+    "description": "Cerveza Budweiser",
+    "color": "var(--beer-color)"
+  },
+  {
+    "id": "cerveza",
+    "name": "Cerveza Club Colombia",
+    "category": "Bebidas",
+    "unit": "lata 269ml",
+    "stock": 16,
+    "icon": "🍺",
+    "description": "Cerveza Club Colombia",
+    "color": "var(--beer-color)"
+  },
+  {
+    "id": "Tinto de Verano",
+    "name": "Tinto de Verano",
+    "category": "Bebidas",
+    "unit": "vaso",
+    "stock": 10,
+    "icon": "🍺",
+    "description": "Tinto de Verano",
+    "color": "var(--beer-color)"
   },
   {
     "id": "agua",
     "name": "Agua Mineral",
     "category": "Bebidas",
     "unit": "botella 500ml",
-    "stock": 0,
+    "stock": 100,
     "icon": "💧",
     "description": "Agua mineral purificada y refrescante.",
     "color": "var(--agua-color)"
