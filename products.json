@@ -1,36 +1,36 @@
 [
   {
-    "id": "cerveza",
+    "id": "cervezasa",
     "name": "Cerveza Stella Artois",
     "category": "Bebidas",
     "unit": "botella 330ml",
-    "stock": 16,
+    "stock": 8,
     "icon": "🍺",
     "description": "Cerveza Stella Artois",
     "color": "var(--beer-color)"
   },
   {
-    "id": "cerveza",
+    "id": "cervezabu",
     "name": "Cerveza Budweiser",
     "category": "Bebidas",
     "unit": "lata 269ml",
-    "stock": 16,
+    "stock": 12,
     "icon": "🍺",
     "description": "Cerveza Budweiser",
     "color": "var(--beer-color)"
   },
   {
-    "id": "cerveza",
+    "id": "cervezacc",
     "name": "Cerveza Club Colombia",
     "category": "Bebidas",
     "unit": "lata 269ml",
-    "stock": 16,
+    "stock": 11,
     "icon": "🍺",
     "description": "Cerveza Club Colombia",
     "color": "var(--beer-color)"
   },
   {
-    "id": "Tinto de Verano",
+    "id": "TintodeVerano",
     "name": "Tinto de Verano",
     "category": "Bebidas",
     "unit": "vaso",
