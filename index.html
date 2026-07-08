@@ -258,6 +258,26 @@ ALTER PUBLICATION supabase_realtime ADD TABLE orders;</pre>
     </div>
   </div>
 
+  <!-- ================= MODAL: AUTENTICACIÓN ADMIN ================= -->
+  <div id="admin-auth-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="admin-auth-title">
+    <div class="modal-content" style="max-width: 360px;">
+      <div class="modal-header">
+        <h3 id="admin-auth-title">Acceso Admin</h3>
+        <button class="close-btn" aria-label="Cerrar modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 8px;">Por favor, ingrese la contraseña de administrador:</p>
+        <div class="form-group" style="margin-bottom: 8px;">
+          <input type="password" id="admin-password-input" placeholder="••••••••" style="width: 100%; text-align: center; font-size: 1.25rem; letter-spacing: 0.25em; padding: 10px;">
+        </div>
+      </div>
+      <div class="modal-footer" style="gap: 8px;">
+        <button class="btn-secondary btn-close-modal" style="flex: 1; justify-content: center;">Cancelar</button>
+        <button id="btn-submit-admin-auth" class="btn-primary" style="flex: 1; justify-content: center;">Ingresar 🔓</button>
+      </div>
+    </div>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>

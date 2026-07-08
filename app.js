@@ -10,7 +10,8 @@ let config = {
   supabaseUrl: "",
   supabaseKey: "",
   whatsappPhone: "",
-  whatsappEnabled: false
+  whatsappEnabled: false,
+  adminPasswordHash: ""
 };
 
 let supabaseClient = null;
@@ -657,24 +658,18 @@ function setupEventListeners() {
     updateRoleView();
   });
   
-	document.getElementById('btn-role-admin').addEventListener('click', () => {
-	  playSound('click');
+  document.getElementById('btn-role-admin').addEventListener('click', () => {
+    playSound('click');
+    openAdminAuthModal();
+  });
 
-	  const password = prompt('Ingrese la contraseña de administrador:');
-
-	  if (password === null) {
-		return; // El usuario canceló
-	  }
-
-	  if (password !== '10140') {
-		showToast('Contraseña incorrecta', 'danger');
-		return;
-	  }
-
-	  activeRole = 'admin';
-	  localStorage.setItem('partido_active_role', 'admin');
-	  updateRoleView();
-	});
+  // Confirmación de Contraseña de Administrador (Modal)
+  document.getElementById('btn-submit-admin-auth').addEventListener('click', submitAdminAuth);
+  document.getElementById('admin-password-input').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      submitAdminAuth();
+    }
+  });
 
   // Confirmación de Identidad por Botón
   const submitName = () => {
@@ -815,4 +810,47 @@ function closeModal() {
   document.querySelectorAll('.modal-overlay').forEach(modal => {
     modal.classList.add('hidden');
   });
+}
+
+function openAdminAuthModal() {
+  const modal = document.getElementById('admin-auth-modal');
+  const passwordInput = document.getElementById('admin-password-input');
+  passwordInput.value = '';
+  modal.classList.remove('hidden');
+  setTimeout(() => {
+    passwordInput.focus();
+  }, 100);
+}
+
+async function sha256(string) {
+  const utf8 = new TextEncoder().encode(string);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function submitAdminAuth() {
+  const passwordInput = document.getElementById('admin-password-input');
+  const password = passwordInput.value;
+
+  let authorized = false;
+  if (config.adminPasswordHash) {
+    const inputHash = await sha256(password);
+    authorized = (inputHash === config.adminPasswordHash);
+  } else {
+    authorized = (password === '10140');
+  }
+
+  if (authorized) {
+    playSound('click');
+    closeModal();
+    activeRole = 'admin';
+    localStorage.setItem('partido_active_role', 'admin');
+    updateRoleView();
+  } else {
+    playSound('click');
+    showToast('Contraseña incorrecta', 'danger');
+    passwordInput.value = '';
+    passwordInput.focus();
+  }
 }
